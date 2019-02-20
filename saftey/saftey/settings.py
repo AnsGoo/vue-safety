@@ -14,6 +14,7 @@ import os
 import logging
 import django.utils.log
 import logging.handlers
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',  # 设置token
     'ProjectSafteyManage',
     'CompanySafteyManage',
+    'corsheaders',
     'user',
     'guardian',
 ]
@@ -115,6 +119,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',  # JWT认证，在前面的认证方案优先
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+JWT_AUTH = {
+    # JWT_EXPIRATION_DELTA 指明token的有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
