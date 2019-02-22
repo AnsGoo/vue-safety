@@ -18,8 +18,8 @@ from user import views
 from rest_framework_jwt.views import obtain_jwt_token
 urlpatterns = [
     path('register/', views.register, name='register'),
-    path(r'login/', obtain_jwt_token),
-    # path('login/', views.login, name='login'),
+    # path(r'login/', obtain_jwt_token),
+    path('login/', views.login, name='login'),
     path('user/get_user/', views.get_user),
     path('user/profile/add/', views.profile_add),
     path('user/profile/update/<int:id>/',

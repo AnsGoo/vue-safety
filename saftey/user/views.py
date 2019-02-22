@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 from .models import AuthUser
@@ -24,6 +25,7 @@ from .models import Workhistory
 from .models import Cities
 from .models import Provinces
 from .models import Areas
+from saftey.settings import SECRET_KEY
 log = logging.getLogger('scripts')
 
 
@@ -63,12 +65,16 @@ def login(request):
         log.info(user.username)
         if user is not None and user.is_active:
             auth.login(request, user)
-            return HttpResponse(json.dumps({'user':username}))
+            s = Serializer(SECRET_KEY, expires_in=60*60*24)
+            token = s.dumps({'username': username,'password':password})
+            print(token)
+            return HttpResponse(json.dumps({'status': True, 'username': username, 'token': str(token,encoding='utf-8')}))
             # return HttpResponseRedirect('/company/index')
         else:
             # return render(request, 'login.html', {'msg': 'user or password is not exist'})
-            return HttpResponse(json.dumps({'user': None}))
-    return render(request, 'login.html', {'msg': None})
+            return HttpResponse(json.dumps({'status': False, 'username': None, 'token': None}))
+    else:
+        return HttpResponse(json.dumps({'status': False, 'username': None, 'token': None}))
 
 
 @csrf_exempt
@@ -161,9 +167,15 @@ def pwd_change(request, id):
     return HttpResponse(request, json.dumps({'status': 'OK'}))
 
 
+@csrf_exempt
 def logout(request):
-    auth.logout(request)
+    token = request.POST.get('token')
+    s = Serializer(SECRET_KEY, expires_in=60*60*24)
+    loginUser = s.loads(token)
+    print(loginUser)
+    user = auth.authenticate(**loginUser)
     # return HttpResponseRedirect("login")
+    print(user.username)
     return HttpResponse('OK')
 
 @login_required(login_url='/login/')

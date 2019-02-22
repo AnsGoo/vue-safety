@@ -1,8 +1,8 @@
 {
-  "name": "saftey",
+  "name": "appfront",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "chenghaiwen",
+  "author": "AnsGoo <haiven_123@163.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -10,8 +10,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "element-ui": "^2.5.4",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -27,7 +25,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
-    "css-loader": "^0.28.11",
+    "css-loader": "^0.28.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
@@ -42,8 +40,6 @@
     "rimraf": "^2.6.0",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
-    "style-loader": "^0.23.1",
-    "stylus-loader": "^3.0.2",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
     "vue-loader": "^13.3.0",

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div v-wechat-title="$route.meta.title"></div>
     <el-container class="s-container">
       <el-header class="s-head">
         <el-row :gutter="24">
@@ -88,12 +89,10 @@ export default {
   },
   methods: {
     getUser: function() {
-      this.$axios.get("http://127.0.0.1:8000/user/get_user/").then(resp => {
-        console.log(resp.data);
-        let loginStatus = resp.data;
-        this.isLogin = loginStatus.status;
-        this.user = loginStatus.user;
-      });
+      let user = this.$store.state.user;
+      console.log(user);
+      this.isLogin = user.isLogin;
+      this.user = user.userName;
     },
     login: function() {
       var params = new URLSearchParams();
@@ -102,15 +101,19 @@ export default {
       this.$axios.post("http://127.0.0.1:8000/login/", params).then(resp => {
         console.log(resp.data);
         let loginStatus = resp.data;
-        this.user = loginStatus.user;
+        this.user = loginStatus.username;
         this.isLogin = true;
+        this.$store.commit("updateLoginStatus", resp.data);
       });
     },
     logout: function() {
-      this.$axios.get("http://127.0.0.1:8000/logout/").then(resp => {
+      var params = new URLSearchParams();
+      params.append("token", this.$store.state.user.token);
+      this.$axios.post("http://127.0.0.1:8000/logout/", params).then(resp => {
         console.log(resp.data);
         this.isLogin = false;
         this.user = null;
+        this.$store.commit("logout");
       });
     }
   }
