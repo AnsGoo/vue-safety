@@ -1,0 +1,244 @@
+﻿{% extends "base.html" %}
+
+
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/admin.css">
+<link rel="stylesheet" href="/static/ztree3/css/bootstrapStyle/bootstrapStyle.css" type="text/css">
+{% endblock %}
+
+{% block center %}
+
+
+<!--头部导航-->
+<div class="panel panel-default center-top" style="min-width:1300px;" >
+  <div class="panel-body">
+    <ol class="breadcrumb" style="margin-bottom: 0px;background-color: #FFFFFF;">
+      <li><a href="/" style="color: #377CD8;">首页</a></li>
+      <li><a href="#">发布管理</a></li>
+      <li class="active">{{ title }}</li>
+    </ol>
+  </div>
+</div>
+
+
+
+<!--用户信息-->
+<div class="panel panel-default center-top" style="min-width:1300px;">
+  <div class="panel-heading">
+      <div class="row" style="padding-top:5px;padding-left:10px;">
+          <div class="col-sm-3">
+
+              <a class="btn btn-sm btn-success" data-toggle="modal" data-target="#postModal"> 新建发布 </a>
+
+          </div>
+
+          <div class="col-sm-6" style="display:inline-block">
+              <div style="width:200px;display: inline-block;">
+                    <select  class="form-control" id="select-site">
+                         <option value="0">站点</option>
+                         {% for site in site_list %}
+                         <option value="{{ site.site_id }}">{{ site.site_name }}</option>
+                         {% endfor %}
+                     </select>
+                </div>
+
+              <div style="width:200px;display: inline-block;">
+                <select  class="form-control" id="select-project">
+                     <option value="0">项目</option>
+                     {% for project in project_list %}
+                     <option value="{{ project.project_id }}">{{ project.project_name }}</option>
+                     {% endfor %}
+                 </select>
+              </div>
+
+              <div style="width:200px;display: inline-block;">
+                <select  class="form-control" id="select-ip">
+                     <option value="0">IP地址</option>
+                    {% for ip in ip_list %}
+                     <option value="{{ ip }}">{{ ip }}</option>
+                    {%  endfor %}
+                 </select>
+              </div>
+          </div>
+
+      </div>
+
+  </div>
+  <div class="panel-body" id="site-info">
+
+        <div style="margin-bottom: 10px;">
+
+            <div class="col-sm-12">
+                <table class="table table-hover table-bordered">
+                  <thead>
+                    <tr style="background-color: #f5f5f5; text-align:center">
+
+                      <th>站点名称</th>
+                      <th>IP地址</th>
+                      <th>站点目录</th>
+                      <th>项目</th>
+                      <th>描述</th>
+                      <th>版本号</th>
+                      <th>版本信息</th>
+                      <th>提交作者</th>
+                      <th>发布时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for i in post_list %}
+                    <tr>
+                      <td>{{ i.site_name }}</td>
+                      <td>{{ i.ip }}</td>
+                      <td>{{ i.site_path }}</td>
+                      <td>{{ i.site_project }}</td>
+                      <td>{{ i.site_msg }}</td>
+                      <td>
+                          <div style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">
+                              {{ i.current_version }}
+                          </div>
+                      </td>
+                      <td>
+
+                          <div style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">
+                              {{ i.version_info }}
+                          </div>
+
+                      </td>
+                      <td>{{ i.author }}</td>
+                      <td>{{ i.upcode_date }}</td>
+                      <td style="padding-left:5px;">
+                        <a href="#" name="upcode" style="text-decoration:none;" post_id="{{ i.post_id }}"><span class="fa fa-cloud-upload " data-toggle="tooltip" data-placement="top" title="更新代码"></span> </a>&nbsp
+                        <a href="/code/recordlog/post_id={{ i.post_id }}" name="uprecord" style="text-decoration:none;" data-toggle="tooltip" data-placement="top" title="更新记录"><span class="fa fa-list"></span></a>&nbsp
+                        <a href="#" name="delcode" style="text-decoration:none;" post_id="{{ i.post_id }}" data-toggle="tooltip" data-placement="right" title="删除"><span class="fa  fa-trash"></span> </a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                <div style="margin-top:-30px;padding-right:9%">
+                      <ul class="pagination pull-right">
+
+                      {% if current_page.has_previous %}
+
+                      <li><a href="/code/postcode/page_id={{ current_page.previous_page_number }}" disabled="disabled" >上一页</a></li>
+                      {% else %}
+                          <li class="disabled"><a href="#"   >上一页</a></li>
+                      {% endif %}
+
+                     {% for index in p.page_range %}
+
+                         {% if current_page.number == index %}
+                          <li><a href= "/code/postcode/page_id={{ index }}" style="background-color: #ddd" >{{ index }}</a></li>
+
+                         {% else %}
+                          <li><a href="/code/postcode/page_id={{ index }}">{{ index }}</a></li>
+                         {% endif %}
+
+                     {% endfor %}
+
+
+                     {% if current_page.has_next%}
+
+                          <li><a href="/code/postcode/page_id={{ current_page.next_page_number }}">下一页</a></li>
+                     {% else %}
+                          <li class="disabled"><a href="#">下一页</a></li>
+                     {% endif %}
+
+                      </ul>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+<!-- Modal -->
+{% block modal %}
+
+<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="margin-top:135px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="postModalLabel">新建发布</h4>
+      </div>
+      <div class="modal-body">
+
+         <form>
+          <div class="form-group">
+            <label >站点名称</label>
+              <select  class="form-control"  placeholder="站点名称" id="site-name">
+                  {% for site  in site_list %}
+                  <option value="{{ site.site_name }}">{{ site.site_name }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="form-group">
+            <label >发布地址</label>
+            <select id="post-ip" multiple="multiple" class="form-control">
+                {% for ip in ip_list %}
+                <option value="{{ ip }}">{{ ip }}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label >站点目录</label>
+            <input  class="form-control"  placeholder="默认：/alidata/站点名称/" id="site-path" value="/alidata">
+          </div>
+
+          <div class="form-group">
+            <label >站点描述</label>
+            <input  class="form-control"  placeholder="站点描述" id="postsite-msg">
+          </div>
+
+<!--
+          <div class="alert alert-danger" role="alert">php服务异常，请检查该服务是否正常运行</div>
+-->
+        </form>
+
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+        <button type="button" class="btn btn-primary" id="sub-post">发布</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock  %}
+
+{% block js %}
+
+    <script type="text/javascript" src="/static/js/code.js"></script>
+
+    <script type="text/javascript">
+
+        //bootstra-multiselect
+        $(document).ready(function() {
+            $('#post-ip').multiselect({
+                    nonSelectedText: '请选择',
+                    includeSelectAllOption: true,
+                    buttonWidth: '100%',
+                    numberDisplayed: 5,
+                    nSelectedText: '个被选中',
+                    selectAllText: '全选',
+                    allSelectedText: '全选',
+
+            });
+        });
+
+
+    </script>
+{% endblock %}
+
+

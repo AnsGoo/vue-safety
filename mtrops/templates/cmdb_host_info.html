@@ -1,0 +1,204 @@
+﻿{% extends "base.html" %}
+
+
+
+{% block css %}
+<link rel="stylesheet" href="/static/css/admin.css">
+
+{% endblock %}
+
+
+{% block center %}
+
+
+<!--头部导航-->
+<div class="panel panel-default center-top" style="min-width:1300px;">
+  <div class="panel-body">
+    <ol class="breadcrumb" style="margin-bottom: 0px;background-color: #FFFFFF;">
+      <li><a href="/" style="color: #377CD8;">首页</a></li>
+      <li><a href="#">资产信息</a></li>
+      <li class="active">{{ title }}</li>
+    </ol>
+  </div>
+</div>
+
+
+
+<!--用户信息-->
+<div class="panel panel-default center-top" style="min-width:1300px;">
+  <div class="panel-heading">
+      <div class="row" style="padding-top:5px;padding-left:10px;">
+          <div class="col-sm-3 pull-right">
+
+              <div class="input-group">
+                  <input type="text" class="form-control" placeholder="输入ip查询" id="info-search">
+                  <span class="input-group-btn">
+                    <a  href="/cmdb/hostinfo/page_id=1/" class="btn btn-success"  style="margin-left:5px" > 返回</a>
+                  </span>
+              </div><!-- /input-group -->
+
+          </div>
+
+      </div>
+  </div>
+  <div class="panel-body" id="host-info">
+
+        <div class="panel panel-default center-top" style="min-width:1250px;">
+          <div class="panel-heading">
+              <div class="row" style="padding-top:5px;padding-left:10px;">
+                  <div class="col-sm-3">
+                      <h4>主机 {{ host_info.IP }} 信息</h4>
+                  </div>
+
+              </div>
+          </div>
+          <div class="panel-body" >
+              <div class="row">
+                  <div class="col-sm-3">
+                      <span>主机IP地址：{{ host_info.IP }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>内网地址：{{ host_info.in_ip }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span> 主机名：{{host_info.hostname }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span> 描述：{{host_info.msg }}</span>
+
+                  </div>
+              </div>
+              <hr>
+
+              <div class="row">
+                  <div class="col-sm-3">
+                      <span>虚拟类型：{{ host_info.service_type }}</span>
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span> 系统类型：{{host_info.os_type }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>系统版本：{{ host_info.os_version }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>内核版本：{{ host_info.kernel }}</span>
+                  </div>
+              </div>
+              <hr>
+
+              <div class="row">
+                  <div class="col-sm-3">
+                      <span>CPU型号：{{ host_info.cpu_type }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>CPU核数：{{ host_info.cpu_num }}</span>
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span> 物理内存：{{host_info.mem_total }} MB</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span> 虚拟内存（swap）：{% widthratio  host_info.mem_swap 1024 1 %} MB</span>
+                  </div>
+
+              </div>
+              <hr>
+
+
+              <div class="row">
+                  <div class="col-sm-3">
+                      <span>管理用户：{{ host_info.username }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>管理密码：{{ host_info.passwd }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span>远程端口：{{ host_info.port }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span> 设备类型：{{host_info.device_type }}</span>
+                  </div>
+
+              </div>
+              <hr>
+              <div class="row">
+
+                  <div class="col-sm-3">
+                      <span>主机组：{{ host_info.host_group.group_name }}</span>
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span> 机房：{{ host_info.idc.idc_name }}</span>
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span> 开机状态：{{host_info.status }}</span>
+                  </div>
+                  <div class="col-sm-3">
+                      <span> 添加时间：{{ host_info.addTime |date:"Y-m-d H:i:s" }}</span>
+                  </div>
+
+              </div>
+              <hr>
+              <div class="row">
+                  <div class="col-sm-3">
+                      <span id="root"> </span>
+
+
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span id="home"> </span>
+                  </div>
+
+                  <div class="col-sm-3">
+                      <span id="alidata"></span>
+                  </div>
+              </div>
+
+
+          </div>
+        </div>
+
+
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+
+<script type="text/javascript" src="/static/js/cmdb.js"></script>
+
+
+<script type='text/javascript'>
+    var rootdata = {{ host_info.mount_root |safe }};
+    var root_total = parseInt(rootdata.total/1024/1024/1024);
+    $("#root").append("根分区 [ / ]："+root_total+" GB")
+
+    var rootdata = {{ host_info.mount_home |safe }};
+    var home_total = parseInt(rootdata.total/1024/1024/1024);
+    $("#home").append("家分区 [ /home ]："+home_total+" GB")
+
+
+    var rootdata = {{ host_info.mount_alidata |safe }};
+    var alidata_total = parseInt(rootdata.total/1024/1024/1024);
+    $("#alidata").append("项目分区 [ /alidata ]："+alidata_total+" GB")
+
+
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
+</script>
+
+{% endblock %}
+
+
+
